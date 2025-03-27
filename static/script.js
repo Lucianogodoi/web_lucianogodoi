@@ -12,10 +12,15 @@ function openWindow(type) {
     const template = document.getElementById('window-template');
     const newWindow = template.cloneNode(true);
     newWindow.style.display = 'block';
+    newWindow.style.height = 'auto';
+    newWindow.style.maxHeight = '80vh'; // para evitar que sea más alto que la pantalla
+    newWindow.style.width = '500px'; // opcional, si quieres que sea un poco más ancho
+
     
     // Posición aleatoria
     newWindow.style.left = Math.random() * (window.innerWidth - 450) + 'px';
-    newWindow.style.top = Math.random() * (window.innerHeight - 350 - 40) + 'px';
+    newWindow.style.top = (Math.random() * (window.innerHeight - 350 - 100) + 30) + 'px';
+
 
     const title = newWindow.querySelector('.window-title');
     const content = newWindow.querySelector('.window-content');
@@ -38,9 +43,9 @@ function openWindow(type) {
                 <h2>Creación de Contenido</h2>
                 <p>Comparto información sobre IA y tecnología en:</p>
                 <ul>
-                    <li>🎙️ Escuchar Podcast</li>
-                    <li>📸 Instagram: @freedata</li>
-                    <li>✍️ Leer mi Blog</li>
+                    <li>🎙️ <a href="https://open.spotify.com/show/0OQon7yas4Ab4nhlOEUg0B" target="_blank">Escuchar Podcast</a></li>
+                    <li>📸 <a href="https://www.instagram.com/chanogodoi/" target="_blank">Instagram: @chanogodoi</a></li>
+                    <li>✍️ <a href="#" onclick="mostrarMensajeBlog()">Leer mi Blog</a></li>
                 </ul>
             `;
             break;
@@ -50,7 +55,7 @@ function openWindow(type) {
                 <h2>Mis Proyectos</h2>
                 <p>He trabajado en investigaciones y proyectos aplicando ciencia de datos e IA:</p>
                 <ul>
-                    <li>🔭 Investigación en Astronomía</li>
+                    <li>🔭 <a href="static/docs/Tesis_Godoi.pdf" target="_blank">Investigación en Astronomía</a></li>
                     <li>🏗️ Proyecto en Codelco</li>
                 </ul>
             `;
@@ -75,6 +80,11 @@ function openWindow(type) {
     document.body.appendChild(newWindow);
     makeDraggable(newWindow);
 }
+
+function mostrarMensajeBlog() {
+    alert("El blog está en construcción 🚧. ¡Pronto habrá contenido!");
+}
+
 
 // Cerrar ventana
 function closeWindow(button) {
