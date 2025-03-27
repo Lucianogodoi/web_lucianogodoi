@@ -1,5 +1,4 @@
-print(" Flask app loaded")
-
+#FINALMENTE V1
 
 from flask import Flask, render_template, redirect
 from normativa import normativa_bp
