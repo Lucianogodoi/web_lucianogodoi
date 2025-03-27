@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Luciano Godoi - Portfolio</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+   <!-- Barra superior (estilo macOS) -->
+   <div class="top-bar">
+        <div class="top-bar-left">
+            <span class="apple-logo"></span>
+            <a href="#" class="menu-item">Luciano Godoi</a>
+            <a href="https://www.linkedin.com/in/lucianogodoi" target="_blank" class="menu-item">LinkedIn</a>
+            <a href="#" class="menu-item">Blog</a>
+            <button class="config-btn" onclick="openBackgroundSettings()">⚙️</button>
+        </div>
+    
+        <div class="top-bar-right">
+            <span class="battery-icon">🔋 85%</span>
+            <span class="clock" id="clock"></span>
+        </div>
+        
+   </div>
+   <div id="background-settings" class="bg-settings hidden">
+        <h3>Cambiar fondo de pantalla</h3>
+        <div class="bg-options">
+            <img src="static/binary-stars-background.jpg" onclick="setBackground(this.src)">
+            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" onclick="setBackground(this.src)">
+            <img src="https://images.unsplash.com/photo-1499346030926-9a72daac6c63" onclick="setBackground(this.src)">
+            <img src="static/cookie.jpg" onclick="setBackground(this.src)">
+        </div>
+    </div>
+
+   <div class="desktop">
+        <a href="https://www.linkedin.com/in/lucianogodoi" target="_blank" class="icon app-icon" style="left: 150px; top: 80px;">
+            <img src="static/linkedin-logo.png" alt="LinkedIn" class="app-icon-img">
+            <span>LinkedIn</span>
+        </a>
+        <a href="https://www.github.com" target="_blank" class="icon app-icon" style="left: 300px; top: 80px;">
+            <img src="static/github-logo.png" alt="GitHub" class="app-icon-img">
+            <span>GitHub</span>
+        </a>
+        <a href="https://www.twitter.com" target="_blank" class="icon app-icon" style="left: 450px; top: 80px;">
+            <img src="static/twitter-logo.png" alt="Twitter" class="app-icon-img">
+            <span>Twitter</span>
+        </a>
+        <a href="/normativa" class="icon app-icon" style="left: 600px; top: 80px;">
+            <img src="static/normativa-icon.png" alt="Normativa" class="app-icon-img">
+            <span>Normativa</span>
+        </a>
+        
+        
+
+       <!-- Dock inferior fijo -->
+    <div class="dock-bar">
+        <div class="icon" onclick="openWindow('sobre-mi')">
+            <img src="static/icon-about-me.png" class="dock-icon-img" alt="Sobre mí">
+            <span>Sobre Mí</span>
+        </div>
+        <div class="icon" onclick="openWindow('redes')">
+            <img src="static/icon-social-media.png" class="dock-icon-img" alt="Redes Sociales">
+            <span>Redes</span>
+        </div>
+        <div class="icon" onclick="openWindow('proyectos')">
+            <img src="static/icon-project.png" class="dock-icon-img" alt="Proyectos">
+            <span>Proyectos</span>
+        </div>
+        <div class="icon" onclick="openWindow('formacion')">
+            <img src="static/icon-education.png" class="dock-icon-img" alt="Formación">
+            <span>Formación</span>
+        </div>
+        <div class="icon" onclick="openWindow('contacto')">
+            <img src="static/icon-contact.png" class="dock-icon-img" alt="Contacto">
+            <span>Contacto</span>
+        </div>
+    </div>
+    
+
+
+   <!-- Plantilla para ventanas -->
+   <div class="window" id="window-template" style="display: none;">
+       <div class="window-header">
+           <span class="window-title"></span>
+           <button class="close-btn" onclick="closeWindow(this)">X</button>
+       </div>
+       <div class="window-content">
+           <!-- Contenido dinámico -->
+       </div>
+   </div>
+
+   <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

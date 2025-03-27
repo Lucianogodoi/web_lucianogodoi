@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Grafo de Normas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .grafo-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .grafo-img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .info-norma {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #007bff;
+        }
+        .color-box {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border: 1px solid #333;
+        }
+        .color-principal {
+            background-color: gold;
+        }
+        .color-modificadora {
+            background-color: lightgreen;
+        }
+        .color-modificada {
+            background-color: lightblue;
+        }
+        .color-derogada {
+            background-color: salmon;
+        }
+        .color-derogadora {
+            background-color: red;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .norma-detalle-container {
+            display: none;
+            margin-top: 20px;
+        }
+        .etiqueta {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            margin: 0.1rem;
+            background-color: #e9ecef;
+            border-radius: 0.25rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .etiqueta:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .tab-content {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 0.25rem 0.25rem;
+        }
+        .resultado-busqueda {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-left: 3px solid #007bff;
+            background-color: #f8f9fa;
+        }
+        .resultado-busqueda h5 {
+            margin-top: 0;
+        }
+        .badge-tema {
+            background-color: #28a745;
+            color: white;
+        }
+        .badge-subtema {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+        }
+        #lista-etiquetas {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        #busqueda-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="text-center">Visualizador de Grafo de Normas Jurídicas</h1>
+            <p class="text-center mb-0">
+                Esta herramienta permite visualizar las relaciones entre normas, mostrando cómo se modifican y derogan entre sí.
+            </p>
+        </div>
+ 
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+        {% endif %}
+ 
+        <!-- Tabs para navegación -->
+        <ul class="nav nav-tabs" id="main-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="visualizador-tab" data-bs-toggle="tab" data-bs-target="#visualizador" type="button" role="tab">
+                    <i class="bi bi-diagram-3"></i> Visualizador de Grafo
+                </button>
+            </li>
+            
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="busqueda-tab" data-bs-toggle="tab" data-bs-target="#busqueda" type="button" role="tab">
+                    <i class="bi bi-search"></i> Búsqueda Avanzada
+                </button>
+            </li>
+            
+        </ul>
+ 
+        <div class="tab-content" id="main-tabs-content">
+            <!-- Tab de Visualizador de Grafo -->
+            <div class="tab-pane fade show active" id="visualizador" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="card-title">Seleccionar Norma</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="form-grafo" method="post" action="{{ url_for('normativa.generar_grafo') }}">
+                                    <div class="mb-3">
+                                        <label for="numero_norma" class="form-label">Número de Norma:</label>
+                                        <select class="form-select" id="numero_norma" name="numero_norma" required>
+                                            <option value="">Selecciona una norma</option>
+                                            {% for numero in numeros_normas %}
+                                            <option value="{{ numero }}">{{ numero }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Generar Grafo</button>
+                                </form>
+                            </div>
+                        </div>
+ 
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h3 class="card-title">Guía de Colores</h3>
+                            </div>
+                            <div class="card-body">
+                                <p><span class="color-box color-principal"></span> <strong>Norma Principal:</strong> Centro del análisis</p>
+                                <p><span class="color-box color-modificadora"></span> <strong>Norma Modificadora:</strong> Ha modificado a la norma principal</p>
+                                <p><span class="color-box color-modificada"></span> <strong>Norma Modificada:</strong> Fue modificada por la norma principal</p>
+                                <p><span class="color-box color-derogada"></span> <strong>Norma Derogada:</strong> Fue derogada por la norma principal</p>
+                                <p><span class="color-box color-derogadora"></span> <strong>Norma Derogadora:</strong> Ha derogado a la norma principal</p>
+                            </div>
+                        </div>
+                    </div>
+ 
+                    <div class="col-md-8">
+                        <div class="loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <p>Generando grafo, por favor espere...</p>
+                        </div>
+ 
+                        <div id="resultado-container" style="display: none;">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <h3 class="card-title" id="titulo-norma">Información de la Norma</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div id="info-norma" class="info-norma"></div>
+                                </div>
+                            </div>
+ 
+                            <div class="card grafo-container">
+                                <div class="card-header bg-dark text-white">
+                                    <h3 class="card-title">Grafo de Relaciones</h3>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">
+                                        Haz clic en cualquier nodo del grafo para ver información detallada sobre esa norma.
+                                    </p>
+                                    <img id="grafo-img" class="grafo-img" alt="Grafo de relaciones">
+                                </div>
+                            </div>
+                        </div>
+ 
+                        <div id="norma-detalle-container" class="norma-detalle-container card">
+                            <div class="card-header bg-warning">
+                                <h3 class="card-title" id="titulo-detalle">Detalles de la Norma</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="info-detalle"></div>
+                                <button class="btn btn-secondary mt-3" id="btn-cerrar-detalle">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ 
+            <!-- Tab de Búsqueda Avanzada -->
+            
+            <div class="tab-pane fade" id="busqueda" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="card-title">Criterios de Búsqueda</h3>
+                            </div>
+                            <div class="card-body">
+                                <ul class="nav nav-pills mb-3" id="busqueda-tabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="etiquetas-tab" data-bs-toggle="pill" data-bs-target="#etiquetas-content" type="button" role="tab">
+                                            <i class="bi bi-tags"></i> Etiquetas
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="temas-tab" data-bs-toggle="pill" data-bs-target="#temas-content" type="button" role="tab">
+                                            <i class="bi bi-folder"></i> Temas
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="subtemas-tab" data-bs-toggle="pill" data-bs-target="#subtemas-content" type="button" role="tab">
+                                            <i class="bi bi-folder2"></i> Subtemas
+                                        </button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="busqueda-tabs-content">
+                                    <!-- Tab de Etiquetas -->
+                                    <div class="tab-pane fade show active" id="etiquetas-content" role="tabpanel">
+                                        <h5>Selecciona una etiqueta:</h5>
+                                        <div id="lista-etiquetas">
+                                            {% for etiqueta in etiquetas %}
+                                            <span class="etiqueta" data-valor="{{ etiqueta }}">{{ etiqueta }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                   
+                                    <!-- Tab de Temas -->
+                                    <div class="tab-pane fade" id="temas-content" role="tabpanel">
+                                        <h5>Selecciona un tema:</h5>
+                                        <div class="list-group">
+                                            {% for tema in temas %}
+                                            <button type="button" class="list-group-item list-group-item-action tema-item" data-valor="{{ tema }}">
+                                                {{ tema }}
+                                            </button>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                   
+                                    <!-- Tab de Subtemas -->
+                                    <div class="tab-pane fade" id="subtemas-content" role="tabpanel">
+                                        <h5>Selecciona un subtema:</h5>
+                                        <div class="list-group">
+                                            {% for subtema in subtemas %}
+                                            <button type="button" class="list-group-item list-group-item-action subtema-item" data-valor="{{ subtema }}">
+                                                {{ subtema }}
+                                            </button>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+ 
+                    <div class="col-md-8">
+                        <div id="busqueda-container" class="card">
+                            <div class="card-header bg-success text-white">
+                                <h3 class="card-title" id="titulo-busqueda">Resultados de Búsqueda</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="criterio-busqueda" class="alert alert-info">
+                                    <span id="texto-criterio"></span>
+                                </div>
+                                <div id="resultados-busqueda"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+ 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Formulario para generar el grafo
+            $('#form-grafo').on('submit', function(e) {
+                e.preventDefault();
+    
+                $('.loading').show();
+                $('#resultado-container').hide();
+                $('#norma-detalle-container').hide();
+    
+                $.ajax({
+                    url: '{{ url_for("normativa.generar_grafo") }}',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function(response) {
+                        $('.loading').hide();
+    
+                        if (response.error) {
+                            alert('Error: ' + response.error);
+                            return;
+                        }
+    
+                        $('#grafo-img').attr('src', 'data:image/png;base64,' + response.imagen);
+    
+                        const info = response.info;
+                        $('#titulo-norma').text(`Información de ${info.tipo} ${info.numero}`);
+    
+                        let infoHtml = `
+                            <h4>${info.tipo} N° ${info.numero} (${info.fecha})</h4>
+                            <h5>${info.titulo}</h5>
+                            <hr>
+                        `;
+    
+                        if (info.etiquetas && info.etiquetas.length > 0) {
+                            infoHtml += `<h6>Etiquetas:</h6><p>`;
+                            info.etiquetas.forEach(etiqueta => {
+                                infoHtml += `<span class="badge bg-secondary me-1">${etiqueta}</span>`;
+                            });
+                            infoHtml += `</p>`;
+                        }
+    
+                        if (info.tema) {
+                            infoHtml += `<p><strong>Tema:</strong> <span class="badge badge-tema">${info.tema}</span></p>`;
+                        }
+    
+                        if (info.subtema) {
+                            infoHtml += `<p><strong>Subtema:</strong> <span class="badge badge-subtema">${info.subtema}</span></p>`;
+                        }
+    
+                        infoHtml += `
+                            <h6>Resumen:</h6>
+                            <p>${info.resumen}</p>
+                            <hr>
+                            <h6>Relaciones:</h6>
+                            <ul>
+                                <li>Esta norma ha sido modificada ${info.num_modificaciones} veces.</li>
+                        `;
+    
+                        if (info.num_modifica > 0) {
+                            infoHtml += `<li>Esta norma modifica ${info.num_modifica} norma(s) anterior(es).</li>`;
+                        }
+    
+                        if (info.num_deroga > 0) {
+                            infoHtml += `<li>Esta norma deroga ${info.num_deroga} norma(s) anterior(es).</li>`;
+                        }
+    
+                        infoHtml += `</ul><p><strong>Estado:</strong> ${info.estado}</p>`;
+    
+                        $('#info-norma').html(infoHtml);
+                        $('#resultado-container').show();
+    
+                        $('#grafo-img').on('click', function(e) {
+                            const numeroNorma = prompt("Ingrese el número de la norma que desea ver en detalle:");
+                            if (numeroNorma) {
+                                cargarDetallesNorma(numeroNorma);
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        $('.loading').hide();
+                        alert('Error al procesar la solicitud: ' + error);
+                    }
+                });
+            });
+    
+            // Cargar detalles al hacer clic en un nodo
+            function cargarDetallesNorma(numeroNorma) {
+                $.ajax({
+                    url: '/normativa/detalles_norma/' + numeroNorma,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.error) {
+                            alert('Error: ' + response.error);
+                            return;
+                        }
+    
+                        $('#titulo-detalle').text(`Detalles de ${response.tipo.toUpperCase()} ${response.numero}`);
+    
+                        let detalleHtml = `
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>${response.etiqueta}</h4>
+                                    <h6>Título:</h6>
+                                    <p>${response.titulo}</p>
+                        `;
+    
+                        if (response.etiquetas && response.etiquetas.length > 0) {
+                            detalleHtml += `<h6>Etiquetas:</h6><p>`;
+                            response.etiquetas.forEach(etiqueta => {
+                                detalleHtml += `<span class="badge bg-secondary me-1">${etiqueta}</span>`;
+                            });
+                            detalleHtml += `</p>`;
+                        }
+    
+                        if (response.tema) {
+                            detalleHtml += `<p><strong>Tema:</strong> <span class="badge badge-tema">${response.tema}</span></p>`;
+                        }
+    
+                        if (response.subtema) {
+                            detalleHtml += `<p><strong>Subtema:</strong> <span class="badge badge-subtema">${response.subtema}</span></p>`;
+                        }
+    
+                        detalleHtml += `
+                                <h6>Resumen:</h6>
+                                <p>${response.resumen}</p>
+                                <h6>Relaciones:</h6>
+                        `;
+    
+                        if (response.relaciones_salientes.length > 0) {
+                            detalleHtml += `<h6>Esta norma afecta a:</h6><ul>`;
+                            response.relaciones_salientes.forEach(rel => {
+                                detalleHtml += `<li>${rel.tipo.charAt(0).toUpperCase() + rel.tipo.slice(1)} a: ${rel.etiqueta}</li>`;
+                            });
+                            detalleHtml += `</ul>`;
+                        }
+    
+                        if (response.relaciones_entrantes.length > 0) {
+                            detalleHtml += `<h6>Esta norma es afectada por:</h6><ul>`;
+                            response.relaciones_entrantes.forEach(rel => {
+                                detalleHtml += `<li>Es ${rel.tipo}da por: ${rel.etiqueta}</li>`;
+                            });
+                            detalleHtml += `</ul>`;
+                        }
+    
+                        detalleHtml += `
+                                </div>
+                            </div>
+                        `;
+    
+                        $('#info-detalle').html(detalleHtml);
+                        $('#norma-detalle-container').show();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error al cargar detalles: ' + error);
+                    }
+                });
+            }
+    
+            // Cerrar detalles
+            $('#btn-cerrar-detalle').on('click', function() {
+                $('#norma-detalle-container').hide();
+            });
+    
+            // --- NUEVO: Búsqueda por etiqueta, tema, subtema ---
+            $('#lista-etiquetas').on('click', '.etiqueta', function() {
+                const valor = $(this).data('valor');
+                cargarBusqueda('etiqueta', valor);
+            });
+    
+            $('.tema-item').on('click', function() {
+                const valor = $(this).data('valor');
+                cargarBusqueda('tema', valor);
+            });
+    
+            $('.subtema-item').on('click', function() {
+                const valor = $(this).data('valor');
+                cargarBusqueda('subtema', valor);
+            });
+    
+            function cargarBusqueda(criterio, valor) {
+                $('#resultados-busqueda').html('');
+                $('#busqueda-container').hide();
+    
+                $.get(`/normativa/buscar/${criterio}/${valor}`, function(data) {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                        return;
+                    }
+    
+                    $('#texto-criterio').text(`${criterio}: ${valor}`);
+                    const contenedor = $('#resultados-busqueda');
+                    data.resultados.forEach(norma => {
+                        contenedor.append(`
+                            <div class="resultado-busqueda">
+                                <h5>${norma.tipo} ${norma.numero} (${norma.fecha})</h5>
+                                <p><strong>Título:</strong> ${norma.titulo}</p>
+                                <p><strong>Resumen:</strong> ${norma.resumen}</p>
+                            </div>
+                        `);
+                    });
+    
+                    $('#busqueda-container').show();
+                });
+            }
+        });
+    </script>
+    
+    
+</body>
+</html>
