@@ -15,15 +15,20 @@ function openWindow(type) {
     newWindow.style.height = 'auto';
     newWindow.style.maxHeight = '80vh'; // para evitar que sea más alto que la pantalla
     newWindow.style.width = '500px'; // opcional, si quieres que sea un poco más ancho
+    newWindow.style.overflow = 'auto';
 
-    
-    // Posición aleatoria
+    // Posición aleatoria dentro del alto visible
+    const ventanaAltura = 400; // altura estimada de la ventana
+    const margenInferior = 300;
+    const maxTop = window.innerHeight - ventanaAltura - margenInferior;
+    const topPos = Math.max(30, Math.random() * maxTop);
+    newWindow.style.top = `${topPos}px`;
+
     newWindow.style.left = Math.random() * (window.innerWidth - 450) + 'px';
-    newWindow.style.top = (Math.random() * (window.innerHeight - 350 - 100) + 30) + 'px';
-
 
     const title = newWindow.querySelector('.window-title');
     const content = newWindow.querySelector('.window-content');
+
 
     // Contenido según el tipo
     switch (type) {
