@@ -274,3 +274,110 @@ function abrirProyectoIGP() {
     document.body.appendChild(newWindow);
     makeDraggable(newWindow);
 }
+
+
+let msnPopups = [];
+
+function mostrarMSN(titulo, mensaje) {
+    const contenedor = document.createElement('div');
+    contenedor.className = 'msn-popup';
+    contenedor.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+            <img src="static/msn-logo.png" alt="MSN" style="width: 20px; height: 20px;">
+            <span style="font-weight: bold; font-size: 13px; color: #1c5180;">Windows Live Messenger</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <img src="static/luciano-avatar.png" alt="Avatar" style="width: 50px; height: 50px; border: 1px solid #ccc;">
+            <div style="flex: 1;">
+                <p style="margin: 0; font-weight: bold;">Luciano Godoi dice:</p>
+                <p style="margin: 5px 0 0;">${mensaje}</p>
+            </div>
+        </div>
+        <div class="options">
+            <span onclick="cerrarPopup(this)">Cerrar</span>
+            <span onclick="enviarZumbido(this)">Enviar zumbido</span>
+        </div>
+    `;
+
+    const baseBottom = 20;
+    const spacing = 130;
+    
+    // Lo agregamos *temporalmente* al array
+    msnPopups.push(contenedor);
+
+    // Recalcular la posición de todos los cuadros activos
+    msnPopups.forEach((popup, i) => {
+        popup.style.bottom = `${baseBottom + i * spacing}px`;
+    });
+
+
+    // ✅ SONIDO solo si el mensaje es de Luciano
+    if (titulo === 'Luciano Godoi') {
+        mensajeAudio.currentTime = 0;
+        mensajeAudio.play();
+    }
+
+    document.body.appendChild(contenedor);
+
+    setTimeout(() => {
+        if (contenedor && contenedor.parentElement) {
+            contenedor.remove();
+            msnPopups = msnPopups.filter(p => p !== contenedor);
+    
+            // Reordenar desde cero
+            msnPopups.forEach((popup, i) => {
+                popup.style.bottom = `${baseBottom + i * spacing}px`;
+            });
+        }
+    }, 6000);
+    
+    
+}
+
+function cerrarPopup(elem) {
+    const contenedor = elem.closest('.msn-popup');
+    if (!contenedor) return;
+
+    contenedor.remove();
+    msnPopups = msnPopups.filter(p => p !== contenedor);
+
+    // Reordenar todos los cuadros
+    const baseBottom = 20;
+    const spacing = 130;
+    msnPopups.forEach((popup, i) => {
+        popup.style.bottom = `${baseBottom + i * spacing}px`;
+    });
+}
+
+// Lanzar los mensajes iniciales
+window.addEventListener('load', () => {
+    setTimeout(() => mostrarMSN('Luciano Godoi', 'Hola, bienvenido a mi página.'), 1000);
+    setTimeout(() => mostrarMSN('Luciano Godoi', 'Este es mi portafolio ✨'), 3500);
+});
+
+let zumbidoCount = 0;
+
+
+function enviarZumbido(elem) {
+    if (zumbidoCount >= 2) return;
+
+    zumbidoCount++;
+
+    const contenedor = elem.closest('.msn-popup');
+    contenedor.remove();
+    msnPopups = msnPopups.filter(p => p !== contenedor);
+
+    mostrarMSN('Tú', '🔔 Zumbido enviado a Luciano...');
+
+    setTimeout(() => {
+        if (zumbidoCount === 1) {
+            mostrarMSN('Luciano Godoi', '😠');
+        } else if (zumbidoCount === 2) {
+            mostrarMSN('Luciano Godoi', '😠😠😠');
+        }
+    }, 1500);
+}
+
+
+const mensajeAudio = new Audio('static/msn-notification.mp3');
+mensajeAudio.volume = 0.2; // volumen suave
