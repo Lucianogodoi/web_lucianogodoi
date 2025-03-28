@@ -359,23 +359,25 @@ let zumbidoCount = 0;
 
 
 function enviarZumbido(elem) {
-    if (zumbidoCount >= 2) return;
-
-    zumbidoCount++;
-
     const contenedor = elem.closest('.msn-popup');
     contenedor.remove();
     msnPopups = msnPopups.filter(p => p !== contenedor);
 
-    mostrarMSN('Tú', '🔔 Zumbido enviado a Luciano...');
-
-    setTimeout(() => {
-        if (zumbidoCount === 1) {
+    if (zumbidoCount === 0) {
+        zumbidoCount++;
+        mostrarMSN('Tú', '🔔 Zumbido enviado a Luciano...');
+        setTimeout(() => {
             mostrarMSN('Luciano Godoi', '😠');
-        } else if (zumbidoCount === 2) {
+        }, 1500);
+    } else if (zumbidoCount === 1) {
+        zumbidoCount++;
+        mostrarMSN('Tú', '🔔 Zumbido enviado a Luciano...');
+        setTimeout(() => {
             mostrarMSN('Luciano Godoi', '😠😠😠');
-        }
-    }, 1500);
+        }, 1500);
+    } else {
+        mostrarMSN('Luciano Godoi', '🚫 Te he bloqueado la opción de enviar zumbido.');
+    }
 }
 
 
