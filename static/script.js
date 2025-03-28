@@ -56,22 +56,57 @@ function openWindow(type) {
                 <p>He trabajado en investigaciones y proyectos aplicando ciencia de datos e IA:</p>
                 <ul>
                     <li>🔭 <a href="static/docs/Tesis_Godoi.pdf" target="_blank">Investigación en Astronomía</a></li>
-                    <li>🏗️ Proyecto en Codelco</li>
+                    <li>🏗️ <img src="static/codelco.png" alt="Codelco" style="width: 20px; vertical-align: middle;"> 
+                        <a href="#" onclick="abrirProyectoGPRODET()">Proyecto GPRODET</a>
+                    </li>
+                    <li>🏢 <img src="static/igp-logo.png" alt="IGP" style="width: 20px; vertical-align: middle;">
+                        <a href="#" onclick="abrirProyectoIGP()">Instituto Gestión de Personas</a>
+                    </li>
                 </ul>
             `;
             break;
-        case 'formacion':
-            title.textContent = 'Cursos & Formación';
-            content.innerHTML = `
-                <h2>Formación</h2>
-                <p>🎓 Cursos y formación en ciencia de datos, IA y más.</p>
-            `;
-            break;
+            case 'formacion':
+                title.textContent = 'Formación & Ciencia de Datos';
+                content.innerHTML = `
+                    <h2>Especialización en Inteligencia Artificial</h2>
+                    <p>
+                        📊 <strong>Master of Science in Data Science</strong> – Universidad Adolfo Ibáñez (2022–2023)<br>
+                        ⚙️ <strong>Ingeniería Civil Industrial</strong> + Minor en Business Analytics (2018–2022)
+                    </p>
+                    <p>Mi formación está orientada al desarrollo de soluciones basadas en IA, big data y machine learning.</p>
+            
+                    <h3>🧠 Experiencia práctica destacada</h3>
+                    <ul>
+                        <li>🔍 Desarrollo de algoritmos de detección de colusión interna en <strong>Tottus</strong>, permitiendo identificar pérdidas por <strong>422 millones CLP</strong> en 6 meses.</li>
+                        <li>💸 Detección de lavado de dinero en <strong>LarrainVial</strong>, aplicando modelos adaptados a normativa de la <strong>CMF</strong> y la <strong>UAF</strong>.</li>
+                        <li>📊 Desarrollo de modelos de <em>suitability</em> para clasificación de clientes.</li>
+                        <li>🤖 Experiencia con bots RAG, integración de soluciones con <strong>ComplyAdvantage</strong> y <strong>Codelco</strong>.</li>
+                    </ul>
+            
+                    <h3>📚 Curso Internacional</h3>
+                    <p>
+                        🎓 <strong>Harvard: Improving your Business through a Culture of Health</strong><br>
+                        <a href="static/docs/harvard-certificado.pdf" target="_blank">📄 Ver certificado</a>
+                    </p>
+            
+                    <h3>🔧 Tecnologías dominadas</h3>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" title="Python" width="30"/>
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/r/r-original.svg" title="R" width="30"/>
+                        <img src="static/sql.jpg" title="SQL" width="30"/>
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" title="HTML" width="30"/>
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" title="CSS" width="30"/>
+                        <img src="static/complyadvantage-logo.png" title="ComplyAdvantage" width="60"/>
+                        <img src="static/codelco.png" title="Codelco" width="40"/>
+                        <img src="static/chatgpt.png" title="ChatGPT / RAG" width="40"/>
+                    </div>
+                `;
+                break;            
         case 'contacto':
             title.textContent = 'Contacto & Recursos';
             content.innerHTML = `
                 <h2>Contacto</h2>
-                <p>📄 <a href="#">Descargar CV</a></p>
+                <p>📄 <a href="static/docs/CV_Godoi.pdf" target="_blank">Descargar CV</a></p>
                 <p>🔗 <a href="https://www.linkedin.com/in/lucianogodoi" target="_blank">LinkedIn</a></p>
             `;
             break;
@@ -164,3 +199,73 @@ window.addEventListener('load', () => {
     document.body.style.backgroundImage = `url('${savedBg}')`;
 });
 
+function abrirProyectoGPRODET() {
+    const template = document.getElementById('window-template');
+    const newWindow = template.cloneNode(true);
+    newWindow.style.display = 'block';
+    newWindow.style.left = '100px';
+    newWindow.style.top = '100px';
+    newWindow.style.width = '600px';
+    newWindow.style.height = 'auto';
+    newWindow.style.maxHeight = '80vh';
+
+    const title = newWindow.querySelector('.window-title');
+    const content = newWindow.querySelector('.window-content');
+
+    title.textContent = 'Proyecto GPRODET';
+
+    content.innerHTML = `
+        <img src="static/codelco.png" alt="Logo Codelco" style="width: 100px; float: right; margin-left: 10px;">
+        <p>GPRODET es una herramienta web desarrollada para Codelco. Su objetivo es ayudar en la gestión de proyectos mediante un sistema de evaluación inteligente y análisis de riesgo con IA.</p>
+        <img src="static/gprodet-preview.jpg" alt="Preview GPRODET" style="width: 100%; border-radius: 10px; margin: 10px 0;">
+        <p>
+            <a href="https://gprodet.cl/" target="_blank" style="font-weight: bold;">
+                🌐 Conoce la página
+            </a>
+        </p>
+        <p>Tecnologías utilizadas:</p>
+        <div style="display: flex; gap: 10px;">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" title="HTML" width="30"/>
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" title="CSS" width="30"/>
+            <img src="static/chatgpt.png" title="ChatGPT RAG" width="30"/>
+        </div>
+    `;
+
+    document.body.appendChild(newWindow);
+    makeDraggable(newWindow);
+}
+
+function abrirProyectoIGP() {
+    const template = document.getElementById('window-template');
+    const newWindow = template.cloneNode(true);
+    newWindow.style.display = 'block';
+    newWindow.style.left = '120px';
+    newWindow.style.top = '120px';
+    newWindow.style.width = '600px';
+    newWindow.style.height = 'auto';
+    newWindow.style.maxHeight = '80vh';
+
+    const title = newWindow.querySelector('.window-title');
+    const content = newWindow.querySelector('.window-content');
+
+    title.textContent = 'Instituto Gestión de Personas';
+
+    content.innerHTML = `
+        <img src="static/igp-logo.png" alt="IGP Logo" style="width: 100px; float: right; margin-left: 10px;">
+        <p>Desarrollo de sitio web institucional para el Instituto Gestión de Personas, con enfoque en accesibilidad, claridad y estructura profesional.</p>
+        <img src="static/igp-preview.jpg" alt="Preview IGP" style="width: 100%; border-radius: 10px; margin: 10px 0;">
+        <p>
+            <a href="https://institutogestiondepersonas.cl/" target="_blank" style="font-weight: bold;">
+                🌐 Conoce la página
+            </a>
+        </p>
+        <p>Tecnologías utilizadas:</p>
+        <div style="display: flex; gap: 10px;">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" title="HTML" width="30"/>
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" title="CSS" width="30"/>
+        </div>
+    `;
+
+    document.body.appendChild(newWindow);
+    makeDraggable(newWindow);
+}
